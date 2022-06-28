@@ -3,11 +3,11 @@ const { ShardClient } = require('detritus-client');
 const { GatewayIntents } = require('detritus-client-socket/lib/constants');
 const { TOKEN, PREFIX, CHANNEL } = require('./.env.json');
 
-const commands = new Map();
-for (const f of fs.readdirSync('commands').filter(f => f.endsWith('.js'))) {
-  const cmd = require('./commands/' + f);
-  commands.set(cmd.name, cmd);
-}
+// const commands = new Map();
+// for (const f of fs.readdirSync('commands').filter(f => f.endsWith('.js'))) {
+//   const cmd = require('./commands/' + f);
+//   commands.set(cmd.name, cmd);
+// }
 
 const client = new ShardClient(TOKEN, {
   gateway: {
@@ -19,15 +19,15 @@ client.on('gatewayReady', () => {
   console.log('ready!');
 });
 
-client.on('messageCreate', async ({message}) => {
-  if (message.fromBot || !message.content.startsWith(PREFIX)) return;
+// client.on('messageCreate', async ({message}) => {
+//   if (message.fromBot || !message.content.startsWith(PREFIX)) return;
   
-  const args = message.content.slice(PREFIX.length).split(/ +/);
-  const cmd = args.shift();
+//   const args = message.content.slice(PREFIX.length).split(/ +/);
+//   const cmd = args.shift();
   
-  const command = commands.get(cmd);
-  if (command) command.run(message, args);
-});
+//   const command = commands.get(cmd);
+//   if (command) command.run(message, args);
+// });
 
 client.on('messageDelete', async ({ message }) => {
   if (!message.attachments?.length || message.channel.id === CHANNEL) return;
