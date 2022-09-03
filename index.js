@@ -1,13 +1,7 @@
-const fs = require('fs');
+// const fs = require('fs');
 const { ShardClient } = require('detritus-client');
 const { GatewayIntents } = require('detritus-client-socket/lib/constants');
-const { TOKEN, PREFIX, CHANNEL } = require('./.env.json');
-
-// const commands = new Map();
-// for (const f of fs.readdirSync('commands').filter(f => f.endsWith('.js'))) {
-//   const cmd = require('./commands/' + f);
-//   commands.set(cmd.name, cmd);
-// }
+const { TOKEN, PREFIX, CHANNEL, GUILD } = require('./.env.json');
 
 const client = new ShardClient(TOKEN, {
   gateway: {
@@ -19,18 +13,56 @@ client.on('gatewayReady', () => {
   console.log('ready!');
 });
 
-// client.on('messageCreate', async ({message}) => {
-//   if (message.fromBot || !message.content.startsWith(PREFIX)) return;
+const regex = RegExp(`^${PREFIX}([a-z]+)([^]*)?`);
+client.on('messageCreate', async ({message}) => {
   
-//   const args = message.content.slice(PREFIX.length).split(/ +/);
-//   const cmd = args.shift();
-  
-//   const command = commands.get(cmd);
-//   if (command) command.run(message, args);
-// });
+  const [,type, text] = message.content.match(regex) || [];
+  if (![
+    'waifu',
+    'neko',
+    'shinobu',
+    'megumin',
+    'bully',
+    'cuddle',
+    'cry',
+    'hug',
+    'awoo',
+    'kiss',
+    'lick',
+    'pat',
+    'smug',
+    'bonk',
+    'yeet',
+    'blush',
+    'smile',
+    'wave',
+    'highfive',
+    'handhold',
+    'nom',
+    'bite',
+    'glomp',
+    'slap',
+    'kill',
+    'kick',
+    'happy',
+    'wink',
+    'poke',
+    'dance',
+    'cringe',
+  ].includes(type)) return;
+  const img = await fetch(`https://api.waifu.pics/sfw/${type}`).then(res => res.json());
+  return message.reply({
+    embed: {
+      title: 'Hugs!',
+      description: `${message.author.mention} hugs${text || ''}`,
+      image: { url: img.url },
+      footer: { text: 'pictures from https://waifu.pics' },
+    },
+  });
+});
 
 client.on('messageDelete', async ({ message }) => {
-  if (!message.attachments?.length || message.channel.id === CHANNEL) return;
+  if (message.guild.id !== GUILD || !message.attachments?.length || message.channel.id === CHANNEL) return;
 
   const files = await Promise.all(message.attachments.map(async a => ({
     filename: a.filename,
@@ -47,7 +79,7 @@ client.on('messageDelete', async ({ message }) => {
 client.on('messageUpdate', async ({ old, message }) => {
   const removed = old.attachments.filter(a => !message.attachments.has(a.id)) || [];
 
-  if (!removed.length || message.channel.id === CHANNEL) return;
+  if (message.guild.id !== GUILD || !removed.length || message.channel.id === CHANNEL) return;
 
   const files = await Promise.all(removed.map(async a => ({
     filename: a.filename,
