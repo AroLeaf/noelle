@@ -16,7 +16,7 @@ client.on('gatewayReady', () => {
 const regex = RegExp(`^${PREFIX}([a-z]+)([^]*)?`);
 client.on('messageCreate', async ({message}) => {
   
-  const [,type, text] = message.content.match(regex) || [];
+  const [,type, text = ''] = message.content.match(regex) || [];
   if (![
     'waifu',
     'neko',
@@ -53,8 +53,40 @@ client.on('messageCreate', async ({message}) => {
   const img = await fetch(`https://api.waifu.pics/sfw/${type}`).then(res => res.json());
   return message.reply({
     embed: {
-      title: 'Hugs!',
-      description: `${message.author.mention} hugs${text || ''}`,
+      title: type,
+      description: ({
+        waifu: '',
+        neko: '',
+        shinobu: '',
+        megumin: '',
+        bully: `${message.author.mention} bullies${text}`,
+        cuddle: `${message.author.mention} cuddles${text}`,
+        cry: '',
+        hug: `${message.author.mention} hugs${text}`,
+        awoo: `${message.author.mention} awoos`,
+        kiss: `${message.author.mention} kisses${text}`,
+        lick: `${message.author.mention} licks${text}`,
+        pat: `${message.author.mention} pats${text}`,
+        smug: '',
+        bonk: `${message.author.mention} bonks${text}`,
+        yeet: `${message.author.mention} yeets${text}`,
+        blush: '',
+        smile: '',
+        wave: `${message.author.mention} waves${text ? ` at${text}` : ''}`,
+        highfive: `${message.author.mention} highfives${text}`,
+        handhold: `${message.author.mention} holds hands${text ? ` with${text}` : ''}`,
+        nom: `${message.author.mention} noms${text ? ` on${text}` : ''}`,
+        bite: `${message.author.mention} bites${text}`,
+        glomp: '',
+        slap: `${message.author.mention} slaps${text}`,
+        kill: `${message.author.mention} kills${text}`,
+        kick: `${message.author.mention} kicks${text}`,
+        happy: '',
+        wink: `${message.author.mention} winks${text ? ` at${text}` : ''}`,
+        poke: `${message.author.mention} pokes${text}`,
+        dance: '',
+        cringe: '',
+      })[type],
       image: { url: img.url },
       footer: { text: 'pictures from https://waifu.pics' },
     },
