@@ -5,7 +5,7 @@ const { TOKEN, PREFIX, CHANNEL, GUILD } = require('./.env.json');
 
 const client = new ShardClient(TOKEN, {
   gateway: {
-    intents: GatewayIntents.GUILDS | GatewayIntents.GUILD_MESSAGES,
+    intents: GatewayIntents.GUILDS | GatewayIntents.GUILD_MESSAGES | 1<<15,
   },
 });
 
@@ -93,8 +93,10 @@ client.on('messageCreate', async ({message}) => {
   });
 });
 
-client.on('messageDelete', async ({ message }) => {
-  if (message.guild.id !== GUILD || !message.attachments?.length || message.channel.id === CHANNEL) return;
+client.on('messageDelete', async ({ message, channelId, messageId }) => {
+  message ||= await client.channels.get(channelId).fetchMessage(messageId).catch(() => {});
+  console.log(message?.guild.id !== GUILD, !message.attachments?.length, message.channel.id === CHANNEL);
+  if (message?.guild.id !== GUILD || !message.attachments?.length || message.channel.id === CHANNEL) return;
 
   const files = await Promise.all(message.attachments.map(async a => ({
     filename: a.filename,
@@ -108,8 +110,9 @@ client.on('messageDelete', async ({ message }) => {
   });
 });
 
-client.on('messageUpdate', async ({ old, message }) => {
-  const removed = old.attachments.filter(a => !message.attachments.has(a.id)) || [];
+client.on('messageUpdate', async ({ old, message, channelId, messageId }) => {
+  message ||= await client.channels.get(channelId).fetchMessage(messageId).catch(() => {});
+  const removed = old?.attachments?.filter(a => !message.attachments?.has(a.id)) || [];
 
   if (message.guild.id !== GUILD || !removed.length || message.channel.id === CHANNEL) return;
 
