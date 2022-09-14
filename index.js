@@ -95,7 +95,6 @@ client.on('messageCreate', async ({message}) => {
 
 client.on('messageDelete', async ({ message, channelId, messageId }) => {
   message ||= await client.channels.get(channelId).fetchMessage(messageId).catch(() => {});
-  console.log(message?.guild.id !== GUILD, !message.attachments?.length, message.channel.id === CHANNEL);
   if (message?.guild.id !== GUILD || !message.attachments?.length || message.channel.id === CHANNEL) return;
 
   const files = await Promise.all(message.attachments.map(async a => ({
