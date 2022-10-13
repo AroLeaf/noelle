@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@aroleaf/djs-bot": "^2.1.11",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "xregexp": "^5.1.1"
   }
 }
