@@ -62,7 +62,7 @@ export default new PrefixCommand({
       nocrit: doc.noelle.damage.noCrit,
       def: doc.noelle.stats.parsed.DEF,
       atk: getEndStats(doc.noelle).ATK,
-      er: doc.noelle.stats.parsed.ER,
+      er: doc.noelle.stats.parsed.ER * 100,
     }[sort])}** by <@${doc.user}>`).join('\n'),
     color: 0xe17f93,
   }] });
