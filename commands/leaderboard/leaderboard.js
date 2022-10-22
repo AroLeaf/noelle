@@ -25,13 +25,12 @@ export default new PrefixCommand({
 }, async (message, args) => {
   const ER = args.get('er');
   const sort = args.get('sort')?.toLowerCase() || 'average';
-  if (!sortOptions.includes(sort)) return message.reply('That is not a valid thing to sort by.');
+  if (!sortOptions.includes(sort)) return message.reply('That is not a valid thing to sort by. one of: ' + sortOptions.map(opt => `\`${opt}\``).join(', '));
   
   function getEndStats(noelle) {
     const noelleStats = { ...noelle.stats.parsed };
 
     // geo resonance
-    enemy.stats.Res.Geo -= 0.2;
     noelleStats.DMG ??= 0;
     noelleStats.DMG += 0.15;
 
