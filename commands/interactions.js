@@ -53,17 +53,17 @@ function getInteractionText(type, author, text) {
     yeet: `${author} yeets ${text}`,
     blush: '',
     smile: '',
-    wave: `${author} waves${text ? ` at ${text}` : ''}`,
+    wave: `${author} waves ${text ? `at ${text}` : ''}`,
     highfive: `${author} highfives ${text}`,
-    handhold: `${author} holds hands${text ? ` with ${text}` : ''}`,
-    nom: `${author} noms${text ? ` on ${text}` : ''}`,
+    handhold: `${author} holds hands ${text ? `with ${text}` : ''}`,
+    nom: `${author} noms ${text ? `on ${text}` : ''}`,
     bite: `${author} bites ${text}`,
     glomp: '',
     slap: `${author} slaps ${text}`,
     kill: `${author} kills ${text}`,
     kick: `${author} kicks ${text}`,
     happy: '',
-    wink: `${author} winks${text ? ` at ${text}` : ''}`,
+    wink: `${author} winks ${text ? `at ${text}` : ''}`,
     poke: `${author} pokes ${text}`,
     dance: '',
     cringe: '',
@@ -73,6 +73,7 @@ function getInteractionText(type, author, text) {
 
 export default types.map(type => new PrefixCommand({
   name: type,
+  description: `Cute ${type} images!`,
 }, async (message, args) => {
   const image = await fetch(`https://api.waifu.pics/sfw/${type}`).then(res => res.json());
   return message.reply({
@@ -80,6 +81,7 @@ export default types.map(type => new PrefixCommand({
       title: type,
       description: getInteractionText(type, message.webhookId ? `**${message.author.username}**` : message.author, args.join(' ')),
       image,
+      color: 0xe17f93,
     }],
   });
 }));

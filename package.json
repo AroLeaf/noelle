@@ -6,6 +6,7 @@
   "dependencies": {
     "@aroleaf/djs-bot": "^2.1.13",
     "dotenv": "^16.0.3",
+    "mongoose": "^6.6.7",
     "xregexp": "^5.1.1"
   }
 }
