@@ -37,7 +37,7 @@ export default new PrefixCommand({
   const position = message.client.leaderboard.toJSON().sort((a, b) => b.score - a.score).findIndex(n => n.user === message.author.id) + 1;
 
   return message.reply(old 
-    ? `Your score was updated from ${Math.round(old.score)} to ${Math.round(doc.score)}, increasing by ${Math.round((noelle.damage.avg / old.score - 1) * 100)}, and placing you at #**${position}**.`
+    ? `Your score was updated from **${Math.round(old.score)}** to **${Math.round(doc.score)}**, increasing by **${Math.round((noelle.damage.avg / old.score - 1) * 100)}**%, and placing you at #**${position}**.`
     : `Your score is **${Math.round(doc.score)}**, placing you at #**${position}**.`
   );
 });
