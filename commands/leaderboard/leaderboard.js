@@ -15,8 +15,8 @@ export default new PrefixCommand({
   }],
 }, async (message, args) => {
   const ER = args.get('er');
-  const sort = args.get('sort') || 'average';
-  if (!['crit', 'nocrit', 'average'].includes(sort)) return message.reply('That is not a valid thing to sort by.');
+  const sort = args.get('sort')?.toLowerCase() || 'average';
+  if (!['crit', 'nocrit', 'average', 'def'].includes(sort)) return message.reply('That is not a valid thing to sort by.');
   
   const top = message.client.leaderboard.toJSON()
     .filter(doc => !ER || doc.noelle.stats.parsed.ER >= (ER / 100))
@@ -25,6 +25,7 @@ export default new PrefixCommand({
         case 'average': return b.score - a.score;
         case 'crit': return b.noelle.damage.crit - a.noelle.damage.crit;
         case 'nocrit': return b.noelle.damage.noCrit - a.noelle.damage.noCrit;
+        case 'def': return b.noelle.stats.parsed.DEF - a.noelle.stats.parsed.DEF;
       }
     })
     .slice(0, 10);
@@ -35,6 +36,7 @@ export default new PrefixCommand({
       average: doc.score,
       crit: doc.noelle.damage.crit,
       nocrit: doc.noelle.damage.noCrit,
+      def: doc.noelle.stats.parsed.DEF,
     }[sort])}** by <@${doc.user}>`).join('\n'),
     color: 0xe17f93,
   }] });
