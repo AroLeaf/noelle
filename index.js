@@ -8,6 +8,10 @@ const client = new Bot({
   events: await util.loader('events'),
   prefix: process.env.PREFIX,
   owner: '659488296820408355',
+  register: {
+    global: false,
+    guilds: [process.env.GUILD],
+  }
 });
 
 client.db = new Database(process.env.MONGO);

@@ -3,13 +3,15 @@ import { CommandFlagsBitField, PrefixCommand, PrefixCommandOptionType } from '@a
 export default new PrefixCommand({
   name: 'remove',
   flags: [CommandFlagsBitField.Flags.OWNER_ONLY],
-  options: [{
+  args: [{
     type: PrefixCommandOptionType.USER,
     name: 'user',
+    required: true,
   }],
-}, async (message, args) => {
-  const user = args.get('user');
-  await message.client.db.noelles.deleteOne({ user: user.id });
-  message.client.leaderboard.delete(user.id);
-  return message.reply(`**${user.tag}** was removed from the leaderboard.`);
+}, async (message, { args }) => {
+  const deleted = message.client.leaderboard.cache.delete(args.user.id);
+  return message.reply({
+    content: `${args.user} ${deleted ? 'was removed from' : 'is not on'} the leaderboard.`,
+    allowedMentions: { parse: [], repliedUser: false },
+  });
 });

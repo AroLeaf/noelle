@@ -52,7 +52,7 @@ function getInteractionText(type, author, text) {
     bonk: `${author} bonks ${text}`,
     yeet: `${author} yeets ${text}`,
     blush: '',
-    smile: '',
+    smile: `${author} smiles ${text ? `at ${text}` : ''}`,
     wave: `${author} waves ${text ? `at ${text}` : ''}`,
     highfive: `${author} highfives ${text}`,
     handhold: `${author} holds hands ${text ? `with ${text}` : ''}`,

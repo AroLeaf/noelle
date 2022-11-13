@@ -1,69 +1,123 @@
 import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
+import { weapons, artifacts, constants } from '../../lib/leaderboard/index.js';
+import DME from 'discord-markdown-embeds';
 
-const sortOptions = [
-  'crit',
-  'nocrit',
-  'average',
-  'def',
-  'atk',
-  'er',
-];
+const mappers = {
+  score: entry => entry.noelle.getDamage(constants.NAMELESS).average,
+  crit: entry => entry.noelle.getDamage(constants.NAMELESS).crit,
+  nocrit: entry => entry.noelle.getDamage(constants.NAMELESS).noCrit,
+  def: entry => entry.noelle.burstStats.DEF,
+  atk: entry => entry.noelle.burstStats.ATK,
+  er: entry => entry.noelle.burstStats.ER * 100,
+  cv: entry => {
+    const collected = {};
+    for (const [k, v] of entry.noelle.artifacts.flatMap(i => Object.entries(i.stats))) {
+      collected[k] ??= 0;
+      collected[k] += v;
+    }
+    return (collected.CR * 2 + collected.CD) * 100;
+  },
+}
 
 export default new PrefixCommand({
   name: 'leaderboard',
-  description: 'View the Noelle Mains leaderboard.',
   options: [{
-    type: PrefixCommandOptionType.NUMBER,
     name: 'er',
-    description: 'Energy recharge requirement, percentage',
-    strict: false,
+    short: 'e',
+    args: [{
+      type: PrefixCommandOptionType.INTEGER,
+      name: 'er',
+      required: true,
+    }],
   }, {
+    name: 'weapon',
+    short: 'w',
+    args: [{
+      type: PrefixCommandOptionType.STRING,
+      name: 'weapon',
+      required: true,
+    }],
+  }, {
+    name: 'refinement',
+    short: 'r',
+    args: [{
+      type: PrefixCommandOptionType.INTEGER,
+      name: 'refinement',
+      required: true,
+    }],
+  }, {
+    name: 'constellations',
+    short: 'c',
+    args: [{
+      type: PrefixCommandOptionType.INTEGER,
+      name: 'constellations',
+      required: true,
+    }],
+  }, {
+    name: 'artifacts',
+    short: 'a',
+    args: [{
+      type: PrefixCommandOptionType.STRING,
+      name: 'artifacts',
+      required: true,
+    }],
+  }, {
+    name: 'page',
+    short: 'p',
+    args: [{
+      type: PrefixCommandOptionType.INTEGER,
+      name: 'page',
+      required: true,
+    }],
+  }],
+  args: [{
     type: PrefixCommandOptionType.STRING,
     name: 'sort',
-    description: 'What to sort by.',
   }],
-}, async (message, args) => {
-  const ER = args.get('er');
-  const sort = args.get('sort')?.toLowerCase() || 'average';
-  if (!sortOptions.includes(sort)) return message.reply('That is not a valid thing to sort by. one of: ' + sortOptions.map(opt => `\`${opt}\``).join(', '));
-  
-  function getEndStats(noelle) {
-    const noelleStats = { ...noelle.stats.parsed };
+}, async (message, { args, options }) => {
+  const reply = content => message.reply({ content, allowedMentions: { parse: [], repliedUser: false } });
 
-    // geo resonance
-    noelleStats.DMG ??= 0;
-    noelleStats.DMG += 0.15;
+  options.er ??= 120;
+  options.page ||= 1;
+  args.sort = args.sort?.toLowerCase() || 'score';
 
-    // burst
-    const DEFBonus = [ 0.40, 0.43, 0.46, 0.50, 0.53, 0.56, 0.60, 0.64, 0.68, 0.72, 0.76, 0.80, 0.85, 0.90 ][noelle.talentLevels.burst - 1] + (noelle.constellations === 6) * 0.5;
-    noelleStats.ATK += noelleStats.DEF * DEFBonus;
-    return noelleStats;
+  if (options.weapon) {
+    const weapon = Object.entries(weapons).find(([,w]) => w.aliases.concat(w.name).some(a => a.toLowerCase() === options.weapon.toLowerCase()))?.[0];
+    if (!weapon) return reply(`Invalid weapon \`${options.weapon}\`.`);
+    options.weapon = weapon;
   }
 
-  const top = message.client.leaderboard.toJSON()
-    .filter(doc => !ER || doc.noelle.stats.parsed.ER >= (ER / 100))
-    .sort((a, b) => {
-      switch (sort) {
-        case 'average': return b.score - a.score;
-        case 'crit': return b.noelle.damage.crit - a.noelle.damage.crit;
-        case 'nocrit': return b.noelle.damage.noCrit - a.noelle.damage.noCrit;
-        case 'def': return b.noelle.stats.parsed.DEF - a.noelle.stats.parsed.DEF;
-        case 'atk': return getEndStats(b.noelle).ATK - getEndStats(a.noelle).ATK;
-        case 'er': return b.noelle.stats.parsed.ER - a.noelle.stats.parsed.ER;
-      }
-    })
-    .slice(0, 10);
-  
-  return message.reply({ embeds: [{
-    title: `Noelle Mains Leaderboard ${ER ? `(≥${ER}% ER)` : ''}`,
-    description: top.map((doc, i) => `#**${i + 1}**: **${Math.round({
-      average: doc.score,
-      crit: doc.noelle.damage.crit,
-      nocrit: doc.noelle.damage.noCrit,
-      def: doc.noelle.stats.parsed.DEF,
-      atk: getEndStats(doc.noelle).ATK,
-      er: doc.noelle.stats.parsed.ER * 100,
-    }[sort])}** by <@${doc.user}>`).join('\n'),
-    color: 0xe17f93,
-  }] });
+  if (options.artifacts) {
+    const sets = {};
+    for (const part of options.artifacts.split(/\s*\/\s*/)) {
+      const [, count, name] = part.match(/^(\d+)\s*(\S.*)$/s) || [];
+      if (!count || !name) return reply('Invalid artifact format.');
+      const set = Object.entries(artifacts).find(([,s]) => s.aliases.concat(s.name).some(a => a.toLowerCase() === name.toLowerCase()))?.[0];
+      if (!set) return reply(`Invalid artifact set \`${name}\`.`);
+      sets[set] = count;
+    }
+    options.artifacts = sets;
+  }
+
+  if (!mappers[args.sort]) return reply(`Invalid sort type \`${args.sort}\`.`);
+
+  const leaderboard = message.client.leaderboard.query(options).sort((a, b) => mappers[args.sort](b) - mappers[args.sort](a));
+  const position = leaderboard.toJSON().findIndex(entry => entry.user === message.author.id) + 1;
+  const page = options.page > 0 
+    ? Math.min(options.page, Math.ceil(leaderboard.size / 20) - 1) 
+    : Math.max(Math.ceil(leaderboard.size / 20) - options.page, 0);
+
+  return message.reply(Object.assign(DME.render(`
+    ---
+    footer: page ${page + 1} / ${Math.ceil(leaderboard.size / 20)}
+    color: 0xe17f93
+    ---
+    # Noelle Mains Leaderboard
+
+    Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
+
+    ${leaderboard.toJSON().slice(page * 20, (page + 1) * 20).map((entry, i) => `- #**${page * 20 + i + 1}**: **${Math.round(mappers[args.sort](entry))}** by <@${entry.user}>`).join('\n')}
+  `).messages()[0], {
+    allowedMentions: { parse: [], repliedUser: false },
+  }));
 });

@@ -1,43 +1,56 @@
 import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
-import { transformer, calculator, constants } from '../../lib/leaderboard/index.js';
+import { EnkaError, constants, Noelle } from '../../lib/leaderboard/index.js';
 
 export default new PrefixCommand({
   name: 'submit',
-  description: 'Submit your Noelle for the leaderboard.',
   options: [{
-    type: PrefixCommandOptionType.STRING,
-    name: 'uid',
-    description: 'your Genshin UID',
+    name: 'force',
+    short: 'f',
+  }],
+  args: [{
+    type: PrefixCommandOptionType.INTEGER,
+    name: 'uid', 
     required: true,
   }],
-}, async (message, args) => {
-  const uid = args.get('uid');
-  if (!/^\d{9}$/.test(uid)) return message.reply('That\'s not a valid UID.');
+}, async (message, { args, options }) => {
+  const reply = content => message.reply({ content, allowedMentions: { parse: [], repliedUser: false } });
+
+  const old = message.client.leaderboard.cache.get(message.author.id)?.noelle;
+
+  const noelle = await message.client.leaderboard.getBuild(args.uid).catch(async err => {
+    if (!(err instanceof EnkaError)) throw err;
+    return reply({
+      [constants.ENKA_ERRORS.INVALID_UID]:          'The provided UID is invalid, or there is no user with that UID.',
+      [constants.ENKA_ERRORS.NO_CHARACTER_DETAILS]: 'Your character details are hidden.',
+      [constants.ENKA_ERRORS.CHARACTER_NOT_PUBLIC]: 'You don\'t have Noelle in your public characters.',
+    }[err.code]);
+  });
+  if (!(noelle instanceof Noelle)) return;
+
+  const score = noelle.getDamage(constants.NAMELESS).average;
+  const oldScore = old?.getDamage(constants.NAMELESS).average;
+  const ratio = score / oldScore;
+  if (ratio < 1 && !options.force) return reply(`Your new build (**${Math.round(score)}**) is **${Math.round((1 - ratio) * 100)}%** worse than your current build (**${Math.round(oldScore)}**). You can use the \`--force\` flag to force it to update it anyway.`);
   
-  const data = await fetch(`https://enka.network/u/${uid}/__data.json`).then(res => res.json()).catch(() => {});
-  if (!data) return message.reply('Something went wrong fetching the required data from enka.network, please try again later.');
-  if (!data.playerInfo) return message.reply('That UID does not belong to a player.');
-  if (!data.avatarInfoList) return message.reply('Please turn on "Show Character Details".');
+  await message.client.leaderboard.submit(message.author.id, args.uid, noelle);
+  await message.client.db.noelles.updateOne({ user: message.author.id }, {
+    uid: args.uid,
+    noelle: noelle.toJSON(),
+  }, { upsert: true });
 
-  const enkaNoelle = transformer.getNoelle(data);
-  if (!enkaNoelle) return message.reply('Please add Noelle to your visible characters.');
+  const leaderboard = message.client.leaderboard.query({ er: 120 }).sort((a, b) => b.noelle.getDamage(constants.NAMELESS).average - a.noelle.getDamage(constants.NAMELESS).average);
+  const position = leaderboard.toJSON().findIndex(entry => entry.user === message.author.id) + 1;
 
-  const noelle = transformer.transform(enkaNoelle);
-  noelle.stats.parsed = calculator.stats(noelle);
-  noelle.damage = calculator.damage(noelle, constants.NAMELESS);
+  const strings = {
+    position: position ? `at #**${position}**` : 'not on the leaderboard, maybe your Energy Recharge is too low?',
+    score: Math.round(score),
+    oldScore: Math.round(oldScore),
+    difference: `**${Math.round(Math.abs(ratio - 1) * 100)}%** ${ratio < 1 ? 'worse' : 'better'}`,
+  }
 
-  const old = message.client.leaderboard.get(message.author.id);
-  if (old?.score >= noelle.damage.avg) return message.reply(`Your new score (**${Math.round(noelle.damage.avg)}**) is **${Math.round((1 - noelle.damage.avg / old.score) * 100)}**% worse than your old score (**${Math.round(old.score)}**), your old score was kept on the leaderboard.`);
-
-  const doc = { uid, noelle, score: noelle.damage.avg };
-
-  await message.client.db.noelles.updateOne({ user: message.author.id }, doc, { upsert: true });
-  message.client.leaderboard.set(message.author.id, { ...doc, user: message.author.id });
-
-  const position = message.client.leaderboard.toJSON().sort((a, b) => b.score - a.score).findIndex(n => n.user === message.author.id) + 1;
-
-  return message.reply(old 
-    ? `Your score was updated from **${Math.round(old.score)}** to **${Math.round(doc.score)}**, increasing by **${Math.round((noelle.damage.avg / old.score - 1) * 100)}**%, and placing you at #**${position}**.`
-    : `Your score is **${Math.round(doc.score)}**, placing you at #**${position}**.`
+  return reply(!old 
+    ? `Your score is **${strings.score}**, you are ${strings.position}` : ratio === 1
+    ? `Your builds are equal (**${strings.score}**), but your build has been updated, since you may have other improved stats. You are ${strings.position}`
+    : `Your new build (**${strings.score}**) is ${strings.difference} than your old build (**${strings.oldScore}**). You are ${strings.position}`
   );
 });

@@ -8,8 +8,7 @@ export default new Event({
   const prefix = XRegExp(`^${XRegExp.escape(message.client.prefix)}`).exec(message.content)?.[0];
   if (!prefix) return;
 
-  const args = message.content.slice(prefix.length).split(/ +/);
-  const commandName = args.shift();
+  const [commandName, args = ''] = message.content.slice(prefix.length).split(/ +(.*)/s);
   const command = message.client.commands.resolvePrefixCommand(commandName);
   if (command) await command.execute(message, args);
 });
