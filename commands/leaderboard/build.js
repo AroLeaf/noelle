@@ -14,7 +14,6 @@ export default new PrefixCommand({
 }, async (message, { args }) => {
   const reply = content => message.reply({ content, allowedMentions: { parse: [], repliedUser: false } });
 
-  console.log(args);
   const user = args.user || message.author;
   const uid = args.uid?.toString() || message.client.leaderboard.cache.get(user.id)?.uid;
 
