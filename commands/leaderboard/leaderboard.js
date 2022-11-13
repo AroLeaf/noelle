@@ -103,20 +103,20 @@ export default new PrefixCommand({
 
   const leaderboard = message.client.leaderboard.query(options).sort((a, b) => mappers[args.sort](b) - mappers[args.sort](a));
   const position = leaderboard.toJSON().findIndex(entry => entry.user === message.author.id) + 1;
-  const page = options.page > 0 
+  const page = options.page > 0
     ? Math.min(options.page, Math.ceil(leaderboard.size / 20) - 1) 
     : Math.max(Math.ceil(leaderboard.size / 20) - options.page, 0);
 
   return message.reply(Object.assign(DME.render(`
     ---
-    footer: page ${page + 1} / ${Math.ceil(leaderboard.size / 20)}
+    footer: page ${page} / ${Math.ceil(leaderboard.size / 20)}
     color: 0xe17f93
     ---
     # Noelle Mains Leaderboard
 
     Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
 
-    ${leaderboard.toJSON().slice(page * 20, (page + 1) * 20).map((entry, i) => `- #**${page * 20 + i + 1}**: **${Math.round(mappers[args.sort](entry))}** by <@${entry.user}>`).join('\n')}
+    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `- #**${(page - 1) * 20 + i + 1}**: **${Math.round(mappers[args.sort](entry))}** by <@${entry.user}>`).join('\n')}
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
   }));
