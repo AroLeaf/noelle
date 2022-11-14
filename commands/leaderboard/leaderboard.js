@@ -69,6 +69,9 @@ export default new PrefixCommand({
       name: 'page',
       required: true,
     }],
+  }, {
+    name: 'strict',
+    short: 's',
   }],
   args: [{
     type: PrefixCommandOptionType.STRING,
