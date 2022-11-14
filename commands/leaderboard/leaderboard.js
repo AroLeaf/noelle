@@ -108,7 +108,7 @@ export default new PrefixCommand({
   const position = leaderboard.toJSON().findIndex(entry => entry.user === message.author.id) + 1;
   const page = options.page > 0
     ? Math.min(options.page, Math.ceil(leaderboard.size / 20)) 
-    : Math.max(Math.ceil(leaderboard.size / 20) - options.page, 0);
+    : Math.max(Math.ceil(leaderboard.size / 20) + options.page + 1, 0);
 
   return message.reply(Object.assign(DME.render(`
     ---
