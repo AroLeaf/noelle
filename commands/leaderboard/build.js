@@ -1,6 +1,6 @@
 import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
 import DME from 'discord-markdown-embeds';
-import { constants, Noelle } from '../../lib/leaderboard/index.js';
+import { constants, EnkaError, Noelle } from '../../lib/leaderboard/index.js';
 
 export default new PrefixCommand({
   name: 'build',
