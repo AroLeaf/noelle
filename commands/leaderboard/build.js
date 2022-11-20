@@ -80,7 +80,7 @@ export default new PrefixCommand({
     - Weapon: **${weapons[noelle.weapon.id].name}**
     - LVL: **${noelle.weapon.lvl}**/${[20, 40, 50, 60, 70, 80, 90][noelle.weapon.ascension]}
     - Refinement: **${noelle.weapon.refinement}**
-    - ATK: **${noelle.weapon.ATK}**
+    - ATK: **${noelle.weapon.ATK || 'Not Found'}**
     ${Object.entries(noelle.weapon.stats).map(([k, v]) => constants.PERCENT_PROPS.includes(k)
       ? `- ${constants.PROPER_PROP_NAMES[k]}: **${(v * 100).toFixed(1)}%**`
       : `- ${constants.PROPER_PROP_NAMES[k]}: **${v.toFixed(0)}**`
