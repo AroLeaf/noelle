@@ -1,32 +1,42 @@
 import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
+import DME from 'discord-markdown-embeds';
 
 export default new PrefixCommand({
   name: 'help',
   description: 'Get info about a command, or a list of commands.',
-  options: [{
+  args: [{
     type: PrefixCommandOptionType.STRING,
     name: 'command',
     description: 'the name of the command to get info about',
   }],
-}, async (message, args) => {
-  if (!args.has('command')) return message.reply({
-    embeds: [{
-      title: 'Commands:',
-      description: message.client.commands.prefixCommands.map(cmd => `\`${cmd.name}\``).join(', '),
-      color: 0xe17f93,
-    }],
-  });
+}, async (message, { args }) => {
+  if (!args.command) return message.reply(Object.assign(DME.render(`
+  ---
+  color: 0xe17f93
+  ---
+  # Commands
+  ${message.client.commands.prefixCommands.map(cmd => `\`${cmd.name}\``).join(', ')}
+`).messages()[0], {}));
 
-  const cmd = message.client.commands.resolvePrefixCommand(args.get('command'));
-  return message.reply(cmd ? {
-    embeds: [{
-      title: cmd.name,
-      description: cmd.description,
-      fields: cmd.options?.length ? [{
-        name: 'Options:',
-        value: cmd.options?.map(option => `\`${option.name}\`: ${option.description}`).join('\n'),
-      }] : undefined,
-      color: 0xe17f93,
-    }],
-  } : 'Sorry, that\'s not one of my commands.');
+  const cmd = message.client.commands.resolvePrefixCommand(args.command);
+  if (!cmd) return message.reply({ content: 'Sorry, that\'s not one of my commands.', allowedMentions: { parse: [], repliedUser: false } });
+  return message.reply(Object.assign(DME.render(`
+    ---
+    color: 0xe17f93
+    footer: <> means required, [] means optional, don\'t actually include <> and [] in the command.
+    ---
+    # ${cmd.name}
+    ${cmd.description || ''}
+
+    ${cmd.args?.filter(arg => arg.description).map(arg => `
+      # \`${arg.required ? `<${arg.name}>` : `[${arg.name}]`}\`
+      ${arg.description || ''}
+    `).join('\n') || ''}
+
+    ${cmd.options?.filter(option => option.description).map(option => `
+      # \`--${option.name} ${option.args?.map(arg => arg.required ? `<${arg.name}>` : `[${arg.name}]`) || ''}\`
+      ${option.description || ''}
+      ${option.args?.filter(arg => arg.description).map(arg => `\`${arg.name}\`: ${arg.description}`).join('\n') || ''}
+    `).join('\n') || ''}
+  `).messages()[0], {}));
 });

@@ -21,9 +21,11 @@ const mappers = {
 
 export default new PrefixCommand({
   name: 'leaderboard',
+  description: 'Shows the Noelle Mains leaderboard. By default, it only shows build with **120%** Energy Recharge or more, and sorts by average 1st hit normal attack damage during burst, with Geo resonance as only team buff.',
   options: [{
     name: 'er',
     short: 'e',
+    description: 'Only show builds with at least this much Energy Recharge, defaults to **120%**.',
     args: [{
       type: PrefixCommandOptionType.INTEGER,
       name: 'er',
@@ -32,6 +34,7 @@ export default new PrefixCommand({
   }, {
     name: 'weapon',
     short: 'w',
+    description: 'Show only builds with this weapon.',
     args: [{
       type: PrefixCommandOptionType.STRING,
       name: 'weapon',
@@ -40,6 +43,7 @@ export default new PrefixCommand({
   }, {
     name: 'refinement',
     short: 'r',
+    description: 'Show only builds with their weapon refined to this level, or less.',
     args: [{
       type: PrefixCommandOptionType.INTEGER,
       name: 'refinement',
@@ -48,6 +52,7 @@ export default new PrefixCommand({
   }, {
     name: 'constellations',
     short: 'c',
+    description: 'Show only builds with this amount of constellations unlocked, or less.',
     args: [{
       type: PrefixCommandOptionType.INTEGER,
       name: 'constellations',
@@ -56,6 +61,7 @@ export default new PrefixCommand({
   }, {
     name: 'artifacts',
     short: 'a',
+    description: 'Show only builds with this/these artifact set(s). Format: `"amount setname"`, `"amount setname / amount setname"` (spaces optional).',
     args: [{
       type: PrefixCommandOptionType.STRING,
       name: 'artifacts',
@@ -64,6 +70,7 @@ export default new PrefixCommand({
   }, {
     name: 'page',
     short: 'p',
+    description: 'Which page of the leaderboard to show. Negative values count from the end (-1 is the last page).',
     args: [{
       type: PrefixCommandOptionType.INTEGER,
       name: 'page',
@@ -72,10 +79,12 @@ export default new PrefixCommand({
   }, {
     name: 'strict',
     short: 's',
+    description: 'For the `refinement` and `constellations` options, don\'t allow builds with less than the provided value.',
   }],
   args: [{
     type: PrefixCommandOptionType.STRING,
     name: 'sort',
+    description: `What to sort the leaderboard by. Allowed values: ${Object.keys(mappers).map(k => `\`${k}\``).join(', ')}, defaults to \`score\`.`,
   }],
 }, async (message, { args, options }) => {
   const reply = content => message.reply({ content, allowedMentions: { parse: [], repliedUser: false } });

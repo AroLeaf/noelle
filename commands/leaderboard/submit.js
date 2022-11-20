@@ -3,13 +3,16 @@ import { EnkaError, constants, Noelle } from '../../lib/leaderboard/index.js';
 
 export default new PrefixCommand({
   name: 'submit',
+  description: 'Submits a build to the leaderboard. Make sure you have character details turned on, and Noelle in your public characters.',
   options: [{
     name: 'force',
     short: 'f',
+    description: 'Update your build, even if its score is lower than your currently submitted build.',
   }],
   args: [{
     type: PrefixCommandOptionType.INTEGER,
-    name: 'uid', 
+    name: 'uid',
+    description: 'Your Genshin UID.',
     required: true,
   }],
 }, async (message, { args, options }) => {
