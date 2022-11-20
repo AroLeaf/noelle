@@ -19,6 +19,16 @@ const mappers = {
   },
 }
 
+const rounding = {
+  score: 0,
+  crit: 0,
+  nocrit: 0,
+  def: 0,
+  atk: 0,
+  er: 1,
+  cv: 1,
+}
+
 export default new PrefixCommand({
   name: 'leaderboard',
   description: 'Shows the Noelle Mains leaderboard. By default, it only shows build with **120%** Energy Recharge or more, and sorts by average 1st hit normal attack damage during burst, with Geo resonance as only team buff.',
@@ -128,7 +138,7 @@ export default new PrefixCommand({
 
     Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
 
-    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `- #**${(page - 1) * 20 + i + 1}**: **${Math.round(mappers[args.sort](entry))}** by <@${entry.user}>`).join('\n')}
+    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `- #**${(page - 1) * 20 + i + 1}**: **${mappers[args.sort](entry).toFixed(rounding[args.sort])}** by <@${entry.user}>`).join('\n')}
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
   }));
