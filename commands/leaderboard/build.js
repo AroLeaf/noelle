@@ -30,7 +30,10 @@ export default new PrefixCommand({
 
   if (!uid) return reply(`A cached UID could not be found for ${args.user ? 'the given user' : 'you'}.`);
 
-  const noelle = options.cached ? (args.uid ? message.client.leaderboard.cache.find(entry => entry.uid === uid) : message.client.leaderboard.cache.get(user.id))?.noelle : await message.client.leaderboard.getBuild(uid).catch(async err => {
+  const noelle = options.cached ? (args.uid
+    ? message.client.leaderboard.cache.find(entry => entry.uid === uid) 
+    : message.client.leaderboard.cache.get(user.id)
+  )?.noelle : await message.client.leaderboard.getBuild(uid).catch(async err => {
     if (!(err instanceof EnkaError)) throw err;
     return reply({
       [constants.ENKA_ERRORS.INVALID_UID]:          'The provided UID is invalid, or there is no user with that UID.',
@@ -59,7 +62,7 @@ export default new PrefixCommand({
     color: 0xe17f93
     ---
     # ${args.uid || user.tag}'s Noelle
-
+    ${args.uid ? '' : `UID: **${uid}**\\`}
     Leaderboard position: ${position ? `#**${position}**` : '**User is not on the leaderboard**'}.
 
     - Character LVL: **${noelle.lvl}**/${[20, 40, 50, 60, 70, 80, 90][noelle.ascension]}
