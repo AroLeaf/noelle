@@ -1,5 +1,5 @@
 import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
-import { EnkaError, constants, Noelle } from '../../lib/leaderboard/index.js';
+import { EnkaError, constants, Noelle, Leaderboard } from '../../lib/leaderboard/index.js';
 import { update } from '../../lib/roles.js';
 
 export default new PrefixCommand({
@@ -31,8 +31,8 @@ export default new PrefixCommand({
   });
   if (!(noelle instanceof Noelle)) return;
 
-  const score = noelle.getDamage(constants.NAMELESS).average;
-  const oldScore = old?.getDamage(constants.NAMELESS).average;
+  const score = noelle.getDamage(constants.NAMELESS)[0].average;
+  const oldScore = old?.getDamage(constants.NAMELESS)[0].average;
   const ratio = score / oldScore;
   if (ratio < 1 && !options.force) return reply(`Your new build (**${Math.round(score)}**) is **${Math.round((1 - ratio) * 100)}%** worse than your current build (**${Math.round(oldScore)}**). You can use the \`--force\` flag to force it to update it anyway.`);
   
@@ -42,7 +42,7 @@ export default new PrefixCommand({
     noelle: noelle.toJSON(),
   }, { upsert: true });
 
-  const leaderboard = message.client.leaderboard.query({ er: 120 }).sort((a, b) => b.noelle.getDamage(constants.NAMELESS).average - a.noelle.getDamage(constants.NAMELESS).average);
+  const leaderboard = message.client.leaderboard.query({ er: 120 }).sort((a, b) => Leaderboard.mappers.score(b) - Leaderboard.mappers.score(a));
   const position = leaderboard.toJSON().findIndex(entry => entry.user === message.author.id) + 1;
 
   const strings = {

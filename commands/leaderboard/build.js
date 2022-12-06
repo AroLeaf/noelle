@@ -1,6 +1,6 @@
 import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
 import DME from 'discord-markdown-embeds';
-import { constants, EnkaError, Noelle, weapons, artifacts } from '../../lib/leaderboard/index.js';
+import { constants, EnkaError, Noelle, weapons, artifacts, Leaderboard } from '../../lib/leaderboard/index.js';
 
 export default new PrefixCommand({
   name: 'build',
@@ -54,7 +54,7 @@ export default new PrefixCommand({
   const damage = noelle.getDamage(constants.NAMELESS);
   const burstStats = noelle.burstStats;
   
-  const leaderboard = message.client.leaderboard.query({ er: 120 }).sort((a, b) => b.noelle.getDamage(constants.NAMELESS).average - a.noelle.getDamage(constants.NAMELESS).average);
+  const leaderboard = message.client.leaderboard.query({ er: 120 }).sort((a, b) => Leaderboard.mappers.score(b) - Leaderboard.mappers.score(a));
   const position = leaderboard?.toJSON().findIndex(entry => entry.uid === uid) + 1;
 
   return message.reply(Object.assign(DME.render(`
@@ -95,9 +95,10 @@ export default new PrefixCommand({
     - Main Stats: ${noelle.artifacts.filter(a => a.mainStat && !['HP', 'ATK'].includes(a.mainStat)).map(a => `**${constants.PROPER_PROP_NAMES[a.mainStat]}${a.mainStat.startsWith('P') ? '%' : ''}**`).join('/') || '**Not found**'}
 
     # Damage
-    - No crit: **${Math.round(damage.noCrit)}**
-    - Crit: **${Math.round(damage.crit)}**
-    - Average: **${Math.round(damage.average)}**
+    - N1 No crit: **${Math.round(damage[0].noCrit)}**
+    - N1 Crit: **${Math.round(damage[0].crit)}**
+    - N1 Average: **${Math.round(damage[0].average)}**
+    - Combo Average: **${Math.round(damage.reduce((a, v) => a + v.average, 0))}**
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
   }));
