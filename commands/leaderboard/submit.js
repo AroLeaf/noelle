@@ -1,5 +1,6 @@
 import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
 import { EnkaError, constants, Noelle } from '../../lib/leaderboard/index.js';
+import { update } from '../../lib/roles.js';
 
 export default new PrefixCommand({
   name: 'submit',
@@ -51,9 +52,11 @@ export default new PrefixCommand({
     difference: `**${Math.round(Math.abs(ratio - 1) * 100)}%** ${ratio < 1 ? 'worse' : 'better'}`,
   }
 
-  return reply(!old 
+  await reply(!old 
     ? `Your score is **${strings.score}**, you are ${strings.position}` : ratio === 1
     ? `Your builds are equal (**${strings.score}**), but your build has been updated, since you may have other improved stats. You are ${strings.position}`
     : `Your new build (**${strings.score}**) is ${strings.difference} than your old build (**${strings.oldScore}**). You are ${strings.position}`
   );
+
+  return update(message.guild);
 });

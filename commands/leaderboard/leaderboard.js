@@ -1,33 +1,6 @@
 import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
-import { weapons, artifacts, constants } from '../../lib/leaderboard/index.js';
+import { weapons, artifacts, Leaderboard } from '../../lib/leaderboard/index.js';
 import DME from 'discord-markdown-embeds';
-
-const mappers = {
-  score: entry => entry.noelle.getDamage(constants.NAMELESS).average,
-  crit: entry => entry.noelle.getDamage(constants.NAMELESS).crit,
-  nocrit: entry => entry.noelle.getDamage(constants.NAMELESS).noCrit,
-  def: entry => entry.noelle.burstStats.DEF,
-  atk: entry => entry.noelle.burstStats.ATK,
-  er: entry => entry.noelle.burstStats.ER * 100,
-  cv: entry => {
-    const collected = {};
-    for (const [k, v] of entry.noelle.artifacts.flatMap(i => Object.entries(i.stats))) {
-      collected[k] ??= 0;
-      collected[k] += v;
-    }
-    return (collected.CR * 2 + collected.CD) * 100;
-  },
-}
-
-const rounding = {
-  score: 0,
-  crit: 0,
-  nocrit: 0,
-  def: 0,
-  atk: 0,
-  er: 1,
-  cv: 1,
-}
 
 export default new PrefixCommand({
   name: 'leaderboard',
@@ -94,7 +67,7 @@ export default new PrefixCommand({
   args: [{
     type: PrefixCommandOptionType.STRING,
     name: 'sort',
-    description: `What to sort the leaderboard by. Allowed values: ${Object.keys(mappers).map(k => `\`${k}\``).join(', ')}, defaults to \`score\`.`,
+    description: `What to sort the leaderboard by. Allowed values: ${Object.keys(Leaderboard.mappers).map(k => `\`${k}\``).join(', ')}, defaults to \`score\`.`,
   }],
 }, async (message, { args, options }) => {
   const reply = content => message.reply({ content, allowedMentions: { parse: [], repliedUser: false } });
@@ -121,9 +94,9 @@ export default new PrefixCommand({
     options.artifacts = sets;
   }
 
-  if (!mappers[args.sort]) return reply(`Invalid sort type \`${args.sort}\`.`);
+  if (!Leaderboard.mappers[args.sort]) return reply(`Invalid sort type \`${args.sort}\`.`);
 
-  const leaderboard = message.client.leaderboard.query(options).sort((a, b) => mappers[args.sort](b) - mappers[args.sort](a));
+  const leaderboard = message.client.leaderboard.query(options).sort((a, b) => Leaderboard.mappers[args.sort](b) - Leaderboard.mappers[args.sort](a));
   const position = leaderboard.toJSON().findIndex(entry => entry.user === message.author.id) + 1;
   const page = options.page > 0
     ? Math.min(options.page, Math.ceil(leaderboard.size / 20)) 
@@ -138,7 +111,7 @@ export default new PrefixCommand({
 
     Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
 
-    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `- #**${(page - 1) * 20 + i + 1}**: **${mappers[args.sort](entry).toFixed(rounding[args.sort])}** by <@${entry.user}>`).join('\n')}
+    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `- #**${(page - 1) * 20 + i + 1}**: **${Leaderboard.mappers[args.sort](entry).toFixed(Leaderboard.rounding[args.sort])}** by <@${entry.user}>`).join('\n')}
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
   }));
