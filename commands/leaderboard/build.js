@@ -95,10 +95,9 @@ export default new PrefixCommand({
     - Main Stats: ${noelle.artifacts.filter(a => a.mainStat && !['HP', 'ATK'].includes(a.mainStat)).map(a => `**${constants.PROPER_PROP_NAMES[a.mainStat]}${a.mainStat.startsWith('P') ? '%' : ''}**`).join('/') || '**Not found**'}
 
     # Damage
-    - N1 No crit: **${Math.round(damage[0].noCrit)}**
-    - N1 Crit: **${Math.round(damage[0].crit)}**
-    - N1 Average: **${Math.round(damage[0].average)}**
-    - Combo Average: **${Math.round(damage.reduce((a, v) => a + v.average, 0))}**
+    - N1 No crit: **${Math.round(damage.noCrit)}**
+    - N1 Crit: **${Math.round(damage.crit)}**
+    - N1 Average: **${Math.round(damage.average)}**
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
   }));
