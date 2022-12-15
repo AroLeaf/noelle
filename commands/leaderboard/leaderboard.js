@@ -84,7 +84,7 @@ export default new PrefixCommand({
   options.er ??= 120;
   options.page ||= 1;
   args.sort = args.sort?.toLowerCase() || 'score';
-  options.view = args.sort;
+  options.view ??= args.sort;
 
   if (options.weapon) {
     const weapon = Object.entries(weapons).find(([,w]) => w.aliases.concat(w.name).some(a => a.toLowerCase() === options.weapon.toLowerCase()))?.[0];
