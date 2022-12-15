@@ -60,6 +60,15 @@ export default new PrefixCommand({
       required: true,
     }],
   }, {
+    name: 'view',
+    short: 'v',
+    description: 'Change the stat shown, without changing the stat the leaderboard is sorted by.',
+    args: [{
+      type: PrefixCommandOptionType.STRING,
+      name: 'view',
+      required: true,
+    }],
+  }, {
     name: 'strict',
     short: 's',
     description: 'For the `refinement` and `constellations` options, don\'t allow builds with less than the provided value.',
@@ -75,6 +84,7 @@ export default new PrefixCommand({
   options.er ??= 120;
   options.page ||= 1;
   args.sort = args.sort?.toLowerCase() || 'score';
+  options.view = args.sort;
 
   if (options.weapon) {
     const weapon = Object.entries(weapons).find(([,w]) => w.aliases.concat(w.name).some(a => a.toLowerCase() === options.weapon.toLowerCase()))?.[0];
@@ -111,7 +121,7 @@ export default new PrefixCommand({
 
     Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
 
-    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `- #**${(page - 1) * 20 + i + 1}**: **${Leaderboard.mappers[args.sort](entry).toFixed(Leaderboard.rounding[args.sort])}** by <@${entry.user}>`).join('\n')}
+    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `- #**${(page - 1) * 20 + i + 1}**: **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}** by <@${entry.user}>`).join('\n')}
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
   }));
