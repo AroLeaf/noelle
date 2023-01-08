@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "@aroleaf/djs-bot": "^4.0.0",
-    "discord-markdown-embeds": "^2.0.7",
+    "discord-markdown-embeds": "^3.4.1",
     "dotenv": "^16.0.3",
     "mongoose": "^6.7.2",
     "xregexp": "^5.1.1"

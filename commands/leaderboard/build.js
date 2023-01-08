@@ -1,4 +1,4 @@
-import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
+import { CommandFlagsBitField, PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
 import DME from 'discord-markdown-embeds';
 import { constants, EnkaError, Noelle, weapons, artifacts, Leaderboard } from '../../lib/leaderboard/index.js';
 
@@ -11,6 +11,7 @@ export default new PrefixCommand({
     Can be either a discord user (mention or ID), or a Genshin UID. If a discord user is given, it tries to get their UID from the leaderboard's cache.
     If no user is given, it defaults to the user who issued the command.
   `,
+  flags: CommandFlagsBitField.Flags.GUILD_ONLY,
   options: [{
     name: 'cached',
     description: 'Show the build the user is on the leaderboard with instead of fetching their current build.',

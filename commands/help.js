@@ -11,19 +11,20 @@ export default new PrefixCommand({
   }],
 }, async (message, { args }) => {
   if (!args.command) return message.reply(Object.assign(DME.render(`
-  ---
-  color: 0xe17f93
-  ---
-  # Commands
-  ${message.client.commands.prefixCommands.map(cmd => `\`${cmd.name}\``).join(', ')}
-`).messages()[0], {}));
+    ---
+    color: 0xe17f93
+    ---
+    # Commands
+    ${message.client.commands.prefixCommands.map(cmd => `\`${cmd.name}\``).join(', ')}
+  `).messages()[0], {}));
 
   const cmd = message.client.commands.resolvePrefixCommand(args.command);
   if (!cmd) return message.reply({ content: 'Sorry, that\'s not one of my commands.', allowedMentions: { parse: [], repliedUser: false } });
+
   return message.reply(Object.assign(DME.render(`
     ---
     color: 0xe17f93
-    footer: <> means required, [] means optional, don\'t actually include <> and [] in the command.
+    footer: <> means required, [] means optional, don\'t actually include <> and [] in the command. Arguments with spaces should be surrounded by quotes "like so".
     ---
     # ${cmd.name}
     ${cmd.description || ''}

@@ -4,7 +4,7 @@ import XRegExp from 'xregexp';
 export default new Event({
   event: Events.MessageCreate,
 }, async message => {
-  if (message.guild?.id !== process.env.GUILD) return;
+  if (message.guild && message.guild?.id !== process.env.GUILD) return;
   const prefix = XRegExp(`^${XRegExp.escape(message.client.prefix)}`).exec(message.content)?.[0];
   if (!prefix) return;
 

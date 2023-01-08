@@ -1,10 +1,11 @@
-import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
+import { CommandFlagsBitField, PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
 import { weapons, artifacts, Leaderboard } from '../../lib/leaderboard/index.js';
 import DME from 'discord-markdown-embeds';
 
 export default new PrefixCommand({
   name: 'leaderboard',
-  description: 'Shows the Noelle Mains leaderboard. By default, it only shows build with **120%** Energy Recharge or more, and sorts by average 1st hit normal attack damage during burst, with Geo resonance as only team buff.',
+  description: 'Shows the Noelle Mains leaderboard. By default, it only shows builds with **120%** Energy Recharge or more, and sorts by average 1st hit normal attack damage during burst, with Geo resonance as only team buff.',
+  flags: CommandFlagsBitField.Flags.GUILD_ONLY,
   options: [{
     name: 'er',
     short: 'e',
@@ -44,7 +45,7 @@ export default new PrefixCommand({
   }, {
     name: 'artifacts',
     short: 'a',
-    description: 'Show only builds with this/these artifact set(s). Format: `"amount setname"`, `"amount setname / amount setname"` (spaces optional).',
+    description: 'Show only builds with this/these artifact set(s). Format examples: `"4 husk"`, `"2 husk / 2 glad"`, `2petra/2husk`.',
     args: [{
       type: PrefixCommandOptionType.STRING,
       name: 'artifacts',
@@ -72,7 +73,18 @@ export default new PrefixCommand({
     name: 'strict',
     short: 's',
     description: 'For the `refinement` and `constellations` options, don\'t allow builds with less than the provided value.',
-  }],
+  }/*, {
+    name: 'override',
+    short: 'o',
+    description: `
+      Allows you to override stats for all builds on the leaderboard.
+    `,
+    args: [{
+      type: PrefixCommandOptionType.STRING,
+      name: 'override',
+      required: true,
+    }]
+  }*/],
   args: [{
     type: PrefixCommandOptionType.STRING,
     name: 'sort',
@@ -94,7 +106,7 @@ export default new PrefixCommand({
 
   if (options.artifacts) {
     const sets = {};
-    for (const part of options.artifacts.split(/\s*\/\s*/)) {
+    for (const part of options.artifacts.split(/\s*[\/,]\s*/)) {
       const [, count, name] = part.match(/^(\d+)\s*(\S.*)$/s) || [];
       if (!count || !name) return reply('Invalid artifact format.');
       const set = Object.entries(artifacts).find(([,s]) => s.aliases.concat(s.name).some(a => a.toLowerCase() === name.toLowerCase()))?.[0];
@@ -121,7 +133,11 @@ export default new PrefixCommand({
 
     Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
 
-    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `- #**${(page - 1) * 20 + i + 1}**: **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}** by **${message.client.users.resolve(entry.user)?.tag || 'Unknown User'}** (<@${entry.user}>)`).join('\n')}
+    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `
+      - #**${(page - 1) * 20 + i + 1}**:
+        **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
+        by **${message.guild.members.resolve(entry.user)?.displayName || `<@${entry.user}>`}**
+    `).join('\n')}
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
   }));

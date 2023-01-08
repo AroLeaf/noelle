@@ -1,10 +1,11 @@
-import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
+import { CommandFlagsBitField, PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
 import { EnkaError, constants, Noelle, Leaderboard } from '../../lib/leaderboard/index.js';
 import { update } from '../../lib/roles.js';
 
 export default new PrefixCommand({
   name: 'submit',
   description: 'Submits a build to the leaderboard. Make sure you have character details turned on, and Noelle in your public characters.',
+  flags: CommandFlagsBitField.Flags.GUILD_ONLY,
   options: [{
     name: 'force',
     short: 'f',

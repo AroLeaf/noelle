@@ -5,7 +5,7 @@ import { update } from '../../lib/roles.js';
 export default new PrefixCommand({
   name: 'role+',
   description: 'Link roles to the leaderboards.',
-  flags: [CommandFlagsBitField.Flags.OWNER_ONLY],
+  flags: [CommandFlagsBitField.Flags.OWNER_ONLY, CommandFlagsBitField.Flags.GUILD_ONLY],
   args: [{
     type: PrefixCommandOptionType.ROLE,
     name: 'role',

@@ -1,4 +1,4 @@
-import { PrefixCommand } from '@aroleaf/djs-bot';
+import { CommandFlagsBitField, PrefixCommand } from '@aroleaf/djs-bot';
 
 const types = [
   'waifu',
@@ -74,6 +74,7 @@ function getInteractionText(type, author, text) {
 export default types.map(type => new PrefixCommand({
   name: type,
   description: `Cute ${type} images!`,
+  flags: CommandFlagsBitField.Flags.GUILD_ONLY,
 }, async (message, args) => {
   const image = await fetch(`https://api.waifu.pics/sfw/${type}`).then(res => res.json());
   return message.reply({
