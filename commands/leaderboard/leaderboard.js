@@ -133,11 +133,11 @@ export default new PrefixCommand({
 
     Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
 
-    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `
+    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).flatMap(e => [e,e]).map((entry, i) => `
       - #**${(page - 1) * 20 + i + 1}**:
         **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
         by **${message.guild.members.resolve(entry.user)?.displayName || `<@${entry.user}>`}**
-    `).join('\n')}
+    `).join('')}
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
   }));
