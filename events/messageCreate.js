@@ -1,7 +1,7 @@
 import { Event, Events } from '@aroleaf/djs-bot';
 
 export default new Event({
-  event: Events.MessageDelete,
+  event: Events.MessageCreate,
 }, async message => {
   if (![
     '1064633680712175716',
