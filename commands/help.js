@@ -16,7 +16,31 @@ export default new PrefixCommand({
     ---
     # Commands
     ${message.client.commands.prefixCommands.map(cmd => `\`${cmd.name}\``).join(', ')}
-  `).messages()[0], {}));
+  `).messages()[0], { allowedMentions: { parse: [], repliedUser: false } }));
+
+
+  if (args.command === 'chivalric-blossoms') return message.reply(Object.assign(DME.render(`
+    ---
+    color: 0xe17f93
+    ---
+    # /chivalric-blossoms
+    **NOTE:** This is a slash command, to ensure the safety of your data.
+    Get the Chivalric Blossoms role. Requirement: 36-star the Spiral Abyss using Noelle in every chamber.
+
+    # \`cookies\`
+    Your Hoyolab cookies. These can be obtained as follows:
+    
+    - go to [your battle chronicle](https://act.hoyolab.com/app/community-game-records-sea/index.html#/ys)
+    - open the browser developer console, this can usually be done with \`ctrl+shift+j\` / \`cmd+shift+j\` on Chrome, or with \`ctr+shift+i\` / \`cmd+shift+i\` and going to the "console" tab on most browsers.
+    - paste \`copy(document.cookies)\` and press enter
+    
+    Your cookies will now be on your clipboard.
+
+    **WARNING!** Only give this bot your cookies if you trust me, its developer, Leaf#1950, admin of Noelle Mains!
+    **I promise I don't store these cookies, or use them for anything else than running the required checks for this command.**
+    Having these cookies does **not** allow me to block you out of your account, and does **not** give me access to your Genshin account, only to your Hoyolab account.
+  `).messages()[0], { allowedMentions: { parse: [], repliedUser: false } }));
+
 
   const cmd = message.client.commands.resolvePrefixCommand(args.command);
   if (!cmd) return message.reply({ content: 'Sorry, that\'s not one of my commands.', allowedMentions: { parse: [], repliedUser: false } });
@@ -39,5 +63,5 @@ export default new PrefixCommand({
       ${option.description || ''}
       ${option.args?.filter(arg => arg.description).map(arg => `\`${arg.name}\`: ${arg.description}`).join('\n') || ''}
     `).join('\n') || ''}
-  `).messages()[0], {}));
+  `).messages()[0], { allowedMentions: { parse: [], repliedUser: false } }));
 });

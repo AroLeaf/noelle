@@ -11,6 +11,10 @@ const client = new Bot({
   defaultEvents: {
     messageCreate: false,
   },
+  register: {
+    global: false,
+    guilds: [process.env.GUILD],
+  }
 });
 
 client.db = new Database(process.env.MONGO);
