@@ -24,7 +24,7 @@ export default new PrefixCommand({
     color: 0xe17f93
     ---
     # /chivalric-blossoms
-    **NOTE:** This is a slash command, to ensure the safety of your data.\
+    **NOTE:** This is a slash command, to ensure the safety of your data.  
     Get the Chivalric Blossoms role. Requirement: 36-star the Spiral Abyss using Noelle in every chamber.
 
     # \`cookies\`
