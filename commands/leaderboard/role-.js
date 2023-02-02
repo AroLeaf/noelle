@@ -3,6 +3,7 @@ import { update } from '../../lib/roles.js';
 
 export default new PrefixCommand({
   name: 'role-',
+  aliases: ['r-'],
   description: 'Unlink roles from the leaderboards.',
   flags: [CommandFlagsBitField.Flags.OWNER_ONLY, CommandFlagsBitField.Flags.GUILD_ONLY],
   args: [{

@@ -4,6 +4,7 @@ import DME from 'discord-markdown-embeds';
 
 export default new PrefixCommand({
   name: 'leaderboard',
+  aliases: ['lb'],
   description: 'Shows the Noelle Mains leaderboard. By default, it only shows builds with **120%** Energy Recharge or more, and sorts by average 1st hit normal attack damage during burst, with Geo resonance as only team buff.',
   flags: CommandFlagsBitField.Flags.GUILD_ONLY,
   options: [{

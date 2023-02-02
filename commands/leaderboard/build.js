@@ -4,6 +4,7 @@ import { constants, EnkaError, Noelle, weapons, artifacts, Leaderboard } from '.
 
 export default new PrefixCommand({
   name: 'build',
+  aliases: ['b'],
   description: `
     Shows the build of a user. This will be their current build, and might not match the build they submitted to the leaderboard.
     

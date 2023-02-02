@@ -2,6 +2,7 @@ import { CommandFlagsBitField, PrefixCommand, PrefixCommandOptionType } from '@a
 
 export default new PrefixCommand({
   name: 'remove',
+  aliases: ['rm'],
   description: 'Remove a user from the leaderboards.',
   flags: [CommandFlagsBitField.Flags.OWNER_ONLY, CommandFlagsBitField.Flags.GUILD_ONLY],
   args: [{
