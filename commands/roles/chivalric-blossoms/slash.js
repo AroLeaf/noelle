@@ -1,6 +1,6 @@
-import { ApplicationCommandOptionType, PrefixCommand, SlashCommand } from '@aroleaf/djs-bot';
-import { getAbyssStats, getAccounts } from '../lib/abyss/index.js';
-import { constants } from '../lib/leaderboard/index.js';
+import { ApplicationCommandOptionType, SlashCommand } from '@aroleaf/djs-bot';
+import { getAbyssStats, getAccounts } from '../../../lib/abyss/index.js';
+import { constants } from '../../../lib/leaderboard/index.js';
 import DME from 'discord-markdown-embeds';
 
 export default new SlashCommand({
