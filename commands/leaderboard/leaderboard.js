@@ -125,6 +125,8 @@ export default new PrefixCommand({
     ? Math.min(options.page, Math.ceil(leaderboard.size / 20)) 
     : Math.max(Math.ceil(leaderboard.size / 20) + options.page + 1, 0);
 
+  const paged = leaderboard.toJSON().slice((page - 1) * 20, page * 20);
+
   return message.reply(Object.assign(DME.render(`
     ---
     footer: page ${page} / ${Math.ceil(leaderboard.size / 20)}
@@ -134,10 +136,14 @@ export default new PrefixCommand({
 
     Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
 
-    ${leaderboard.toJSON().slice((page - 1) * 20, page * 20).map((entry, i) => `
-      - #**${(page - 1) * 20 + i + 1}**:
-        **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
-        by **${message.guild.members.resolve(entry.user)?.displayName || `<@${entry.user}>`}**
+    #-Pos.  Score
+    ${paged.map((entry, i) => `
+      - #**${(page - 1) * 20 + i + 1}**: **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
+    `).join('')}
+
+    #-User
+    ${paged.map((entry, i) => `
+      **${message.guild.members.resolve(entry.user)?.displayName || `<@${entry.user}>`}**
     `).join('')}
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
