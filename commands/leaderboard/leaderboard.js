@@ -137,9 +137,14 @@ export default new PrefixCommand({
 
     Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
 
-    #-Pos.  Score
+    #-Pos.
     ${paged.map((entry, i) => `
-      - • #**${(page - 1) * 20 + i + 1}**: **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
+      - #**${(page - 1) * 20 + i + 1}**
+    `).join('')}
+
+    #-Score
+    ${paged.map((entry, i) => `
+      - **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
     `).join('')}
 
     #-User
