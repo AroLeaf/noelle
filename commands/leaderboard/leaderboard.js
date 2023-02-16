@@ -131,6 +131,7 @@ export default new PrefixCommand({
     ---
     footer: page ${page} / ${Math.ceil(leaderboard.size / 20)}
     color: 0xe17f93
+    ul: ''
     ---
     # Noelle Mains Leaderboard
 
@@ -138,12 +139,12 @@ export default new PrefixCommand({
 
     #-Pos.  Score
     ${paged.map((entry, i) => `
-      - #**${(page - 1) * 20 + i + 1}**: **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
+      - • #**${(page - 1) * 20 + i + 1}**: **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
     `).join('')}
 
     #-User
     ${paged.map((entry, i) => `
-      **${message.guild.members.resolve(entry.user)?.displayName || `<@${entry.user}>`}**
+      - **${message.guild.members.resolve(entry.user)?.displayName || `<@${entry.user}>`}**
     `).join('')}
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
