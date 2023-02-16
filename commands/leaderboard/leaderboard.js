@@ -131,25 +131,15 @@ export default new PrefixCommand({
     ---
     footer: page ${page} / ${Math.ceil(leaderboard.size / 20)}
     color: 0xe17f93
-    ul: ''
     ---
     # Noelle Mains Leaderboard
 
     Your position: ${position ? `#**${position}**` : '**You are not on this leaderboard**'}.
 
-    #-Pos.
     ${paged.map((entry, i) => `
-      - #**${(page - 1) * 20 + i + 1}**
-    `).join('')}
-
-    #-Score
-    ${paged.map((entry, i) => `
-      - **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
-    `).join('')}
-
-    #-User
-    ${paged.map((entry, i) => `
-      - **${message.guild.members.resolve(entry.user)?.displayName || `<@${entry.user}>`}**
+      - #**${(page - 1) * 20 + i + 1}**:
+        **${Leaderboard.mappers[options.view](entry).toFixed(Leaderboard.rounding[options.view])}**
+        **${message.guild.members.resolve(entry.user)?.displayName || `<@${entry.user}>`}**
     `).join('')}
   `).messages()[0], {
     allowedMentions: { parse: [], repliedUser: false },
