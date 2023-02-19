@@ -28,7 +28,7 @@ export default new PrefixCommand({
   const mult1 = 1 + args.CR1 / 100 * args.CD1 / 100;
   const mult2 = 1 + args.CR2 / 100 * args.CD2 / 100;
 
-  if (mult1 > mult2) return message.reply(`The first pair is better. (\`${mult1.toFixed(2)}x\` vs \`${mult2.toFixed(2)}x\` non-crit damage)`);
-  if (mult1 < mult2) return message.reply(`The second pair is better. (\`${mult1.toFixed(2)}x\` vs \`${mult2.toFixed(2)}x\` non-crit damage)`);
+  if (mult1 > mult2) return message.reply(`The first pair is better. (\`${mult1.toFixed(2)}x\` vs \`${mult2.toFixed(2)}x\` non-crit damage, \`${(mult1 / mult2 * 100).toFixed(2)}%\` difference)`);
+  if (mult1 < mult2) return message.reply(`The second pair is better. (\`${mult1.toFixed(2)}x\` vs \`${mult2.toFixed(2)}x\` non-crit damage, \`${(mult2 / mult1 * 100).toFixed(2)}%\` difference)`);
   return message.reply(`The two pairs are equal. (\`${mult1.toFixed(2)}x\` non-crit damage)`);
 });
