@@ -13,7 +13,7 @@ const render = DME.render(`
 `).messages()[0];
 
 export default new PrefixCommand({
-  name: 'stats',
+  name: 'talents',
   description: 'Recommended talent upgrade order for Noelle.',
 }, async (message) => {
   return message.reply(render);
