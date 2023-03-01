@@ -1,4 +1,4 @@
-import { PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
+import { PermissionFlagsBits, PrefixCommand, PrefixCommandOptionType } from '@aroleaf/djs-bot';
 
 export default new PrefixCommand({
   name: 'remove-role',
@@ -9,12 +9,15 @@ export default new PrefixCommand({
     description: 'The role to remove from all members.',
     required: true,
   }],
+  permissions: {
+    user: [PermissionFlagsBits.ManageRoles],
+  },
 }, async (message, { args: { role } }) => {
   const members = message.guild.members.cache.filter(member => member.roles.resolve(role.id));
   const reply = await message.reply(`Removing role from ${members.size} members...`);
 
   for (const member of members.values()) {
-    await member.roles.remove(role);
+    await member.roles.remove(role).catch(console.error);
   }
 
   await reply.edit(`Role removed from all members!`);
