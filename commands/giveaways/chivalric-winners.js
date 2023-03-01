@@ -22,8 +22,5 @@ export default new PrefixCommand({
     
     # Chivalric Blossoms Winners
     ${winners.map(winner => winner.user.tag).join(', ')}
-
-    # Role Reset
-    {status}
   `).messages()[0]);
 });
