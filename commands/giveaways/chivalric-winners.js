@@ -14,7 +14,7 @@ export default new PrefixCommand({
   const contestants = message.guild.members.cache.filter(member => member.roles.resolve(process.env.CHIVALRIC_BLOSSOMS));
   const winners = contestants.sort(() => Math.random() - 0.5).first(amount);
 
-  const template = DME.template(`
+  return message.reply(DME.render(`
     ---
     color: 0xe17f93
     ---
@@ -24,13 +24,5 @@ export default new PrefixCommand({
 
     # Role Reset
     {status}
-  `);
-
-  const reply = await message.reply(template.render({ status: 'Removing roles...' }).messages()[0]);
-
-  for (const contestant of contestants.values()) {
-    await contestant.roles.remove(process.env.CHIVALRIC_BLOSSOMS);
-  }
-
-  await reply.edit(template.render({ status: 'Role removed from all members!' }).messages()[0]);
+  `).messages()[0]);
 });
