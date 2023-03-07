@@ -13,14 +13,20 @@ export default new PrefixCommand({
 }, async (message, { args: { amount } }) => {
   if (!message.member.roles.resolve(process.env.MODS)) return message.reply('You need to be a mod to use this command.');
   const contestants = message.guild.members.cache.filter(member => member.roles.resolve(process.env.CHIVALRIC_BLOSSOMS));
-  const winners = contestants.sort(() => Math.random() - 0.5).first(amount);
+  const sorted = contestants.sort(() => Math.random() - 0.5);
+  const winners = sorted.first(amount);
 
-  return message.reply(DME.render(`
+  return message.reply(Object.assign(DME.render(`
     ---
     color: 0xe17f93
     ---
     
     # Chivalric Blossoms Winners
     ${winners.map(winner => winner.user.tag).join(', ')}
-  `).messages()[0]);
+  `).messages()[0], {
+    files: [{
+      attachment: Buffer.from(sorted.map(member => `${member.user.tag} (${member.user.id})`).join('\n'), 'utf8'),
+      name: 'all.txt',
+    }],
+  }));
 });
