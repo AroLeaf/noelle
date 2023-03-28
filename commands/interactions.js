@@ -1,17 +1,11 @@
 import { CommandFlagsBitField, PrefixCommand } from '@aroleaf/djs-bot';
 
 const types = [
-  'waifu',
-  'neko',
-  'shinobu',
-  'megumin',
   'bully',
   'cuddle',
   'cry',
   'hug',
   'awoo',
-  'kiss',
-  'lick',
   'pat',
   'smug',
   'bonk',
@@ -36,17 +30,11 @@ const types = [
 
 function getInteractionText(type, author, text) {
   return ({
-    waifu: '',
-    neko: '',
-    shinobu: '',
-    megumin: '',
     bully: `${author} bullies ${text}`,
     cuddle: `${author} cuddles ${text}`,
     cry: '',
     hug: `${author} hugs ${text}`,
     awoo: `${author} awoos`,
-    kiss: `${author} kisses ${text}`,
-    lick: `${author} licks ${text}`,
     pat: `${author} pats ${text}`,
     smug: '',
     bonk: `${author} bonks ${text}`,
