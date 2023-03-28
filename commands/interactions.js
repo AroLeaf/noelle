@@ -64,13 +64,13 @@ export default types.map(type => new PrefixCommand({
   description: `Cute ${type} images!`,
   flags: CommandFlagsBitField.Flags.GUILD_ONLY,
 }, async (message, args) => {
-  const image = await fetch(`https://api.waifu.pics/sfw/${type}`).then(res => res.json());
-  return message.reply({
+  const image = await fetch(`https://api.waifu.pics/sfw/${type}`).then(res => res.json()).catch(() => {});
+  return message.reply(image ? {
     embeds: [{
       title: type,
       description: getInteractionText(type, message.webhookId ? `**${message.author.username}**` : message.author, args.join(' ')),
       image,
       color: 0xe17f93,
     }],
-  });
+  } : 'An error occurred while fetching the image.');
 }));
