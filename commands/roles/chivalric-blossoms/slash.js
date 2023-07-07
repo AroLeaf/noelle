@@ -22,7 +22,7 @@ export default new SlashCommand({
     
     - go to [your battle chronicle](https://act.hoyolab.com/app/community-game-records-sea/index.html#/ys)
     - open the browser developer console, this can usually be done with \`ctrl+shift+j\` / \`cmd+shift+j\` on Chrome, or with \`ctr+shift+i\` / \`cmd+shift+i\` and going to the "console" tab on most browsers.
-    - paste \`copy(document.cookies)\` and press enter
+    - paste \`copy(document.cookie)\` and press enter
     
     Your cookies will now be on your clipboard.
 
