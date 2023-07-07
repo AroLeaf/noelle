@@ -26,7 +26,7 @@ export default new SlashCommand({
     
     Your cookies will now be on your clipboard.
 
-    **WARNING!** Only give this bot your cookies if you trust me, its developer, Leaf#1950, admin of Noelle Mains!
+    **WARNING!** Only give this bot your cookies if you trust me, its developer, \`leaf.moe\`, admin of Noelle Mains!
     **I don't store your cookies, or use them for anything else than running the required checks for this command.**
     Having your cookies does **not** allow me to block you out of your account, and does **not** give me access to your Genshin account, only to your Hoyolab account.
   `).messages()[0], { ephemeral: true }));
